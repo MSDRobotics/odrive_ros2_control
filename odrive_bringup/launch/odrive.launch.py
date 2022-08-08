@@ -25,36 +25,69 @@ def generate_launch_description():
 
     declared_arguments.append(
         DeclareLaunchArgument(
-            "enable_joint0",
+            "enable_front_left",
             default_value="true",
         )
     )
 
     declared_arguments.append(
         DeclareLaunchArgument(
-            "enable_joint1",
-            default_value="false",
+            "enable_front_right",
+            default_value="true",
         )
     )
 
     declared_arguments.append(
         DeclareLaunchArgument(
-            "joint0_controller",
-            default_value="joint0_velocity_controller",
+            "front_left_controller",
+            default_value="front_left_velocity_controller",
         )
     )
 
     declared_arguments.append(
         DeclareLaunchArgument(
-            "joint1_controller",
-            default_value="joint1_velocity_controller",
+            "front_right_controller",
+            default_value="front_right_velocity_controller",
         )
     )
 
-    enable_joint0 = LaunchConfiguration("enable_joint0")
-    enable_joint1 = LaunchConfiguration("enable_joint1")
-    joint0_controller = LaunchConfiguration("joint0_controller")
-    joint1_controller = LaunchConfiguration("joint1_controller")
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "enable_back_left",
+            default_value="true",
+        )
+    )
+
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "enable_back_right",
+            default_value="true",
+        )
+    )
+
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "back_left_controller",
+            default_value="back_left_velocity_controller",
+        )
+    )
+
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "back_right_controller",
+            default_value="back_right_velocity_controller",
+        )
+    )
+
+    enable_front_left = LaunchConfiguration("enable_front_left")
+    enable_front_right = LaunchConfiguration("enable_front_right")
+    front_left_controller = LaunchConfiguration("front_left_controller")
+    front_right_controller = LaunchConfiguration("front_right_controller")
+
+    enable_back_left = LaunchConfiguration("enable_back_left")
+    enable_back_right = LaunchConfiguration("enable_back_right")
+    back_left_controller = LaunchConfiguration("back_left_controller")
+    back_right_controller = LaunchConfiguration("back_right_controller")
 
     robot_description_content = Command(
         [
@@ -68,11 +101,17 @@ def generate_launch_description():
                 ]
             ),
             " ",
-            "enable_joint0:=",
-            enable_joint0,
+            "enable_front_left:=",
+            enable_front_left,
             " ",
-            "enable_joint1:=",
-            enable_joint1,
+            "enable_front_right:=",
+            enable_front_right,
+            " ",
+            "enable_back_left:=",
+            enable_back_left,
+            " ",
+            "enable_back_right:=",
+            enable_back_right,
         ]
     )
     robot_description = {"robot_description": robot_description_content}
@@ -108,26 +147,42 @@ def generate_launch_description():
         arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
     )
 
-    joint0_controller_spawner = Node(
+    front_left_controller_spawner = Node(
         package="controller_manager",
         executable="spawner.py",
-        arguments=[joint0_controller, "-c", "/controller_manager"],
-        condition=IfCondition(enable_joint0),
+        arguments=[front_left_controller, "-c", "/controller_manager"],
+        condition=IfCondition(enable_front_left),
     )
 
-    joint1_controller_spawner = Node(
+    front_right_controller_spawner = Node(
         package="controller_manager",
         executable="spawner.py",
-        arguments=[joint1_controller, "-c", "/controller_manager"],
-        condition=IfCondition(enable_joint1),
+        arguments=[front_right_controller, "-c", "/controller_manager"],
+        condition=IfCondition(enable_front_right),
+    )
+
+    back_left_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner.py",
+        arguments=[back_left_controller, "-c", "/controller_manager"],
+        condition=IfCondition(enable_back_left),
+    )
+
+    back_right_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner.py",
+        arguments=[back_right_controller, "-c", "/controller_manager"],
+        condition=IfCondition(enable_back_right),
     )
 
     nodes = [
         control_node,
         robot_state_pub_node,
         joint_state_broadcaster_spawner,
-        joint0_controller_spawner,
-        joint1_controller_spawner,
+        front_left_controller_spawner,
+        front_right_controller_spawner,
+        back_left_controller_spawner,
+        back_right_controller_spawner,
     ]
 
     return LaunchDescription(declared_arguments + nodes)

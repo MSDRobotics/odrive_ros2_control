@@ -1,34 +1,56 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="odrive">
 
-  <xacro:arg name="enable_joint0" default="true" />
-  <xacro:arg name="enable_joint1" default="true" />
+  <xacro:arg name="enable_front_left" default="true" />
+  <xacro:arg name="enable_front_right" default="true" />
+  <xacro:arg name="enable_back_left" default="true" />
+  <xacro:arg name="enable_back_right" default="true" />
 
   <xacro:include filename="$(find odrive_description)/urdf/odrive.ros2_control.xacro" />
 
   <link name="world" />
 
-  <xacro:if value="$(arg enable_joint0)">
-    <link name="link0" />
-    <joint name="joint0" type="continuous">
+  <xacro:if value="$(arg enable_front_left)">
+    <link name="front_left_wheel_link" />
+    <joint name="front_left_wheel_joint" type="continuous">
       <parent link="world"/>
-      <child link="link0"/>
+      <child link="front_left_wheel_link"/>
       <axis xyz="0 0 1"/>
     </joint>
   </xacro:if>
 
-  <xacro:if value="$(arg enable_joint1)">
-    <link name="link1" />
-    <joint name="joint1" type="continuous">
+  <xacro:if value="$(arg enable_front_right)">
+    <link name="front_right_wheel_link" />
+    <joint name="front_right_wheel_joint" type="continuous">
       <parent link="world"/>
-      <child link="link1"/>
+      <child link="front_right_wheel_link"/>
+      <axis xyz="0 0 1"/>
+    </joint>
+  </xacro:if>
+
+  <xacro:if value="$(arg enable_back_right)">
+    <link name="back_right_wheel_link" />
+    <joint name="back_right_wheel_joint" type="continuous">
+      <parent link="world"/>
+      <child link="back_right_wheel_link"/>
+      <axis xyz="0 0 1"/>
+    </joint>
+  </xacro:if>
+
+  <xacro:if value="$(arg enable_back_left)">
+    <link name="back_left_wheel_link" />
+    <joint name="back_left_wheel_joint" type="continuous">
+      <parent link="world"/>
+      <child link="back_left_wheel_link"/>
       <axis xyz="0 0 1"/>
     </joint>
   </xacro:if>
 
   <xacro:odrive_ros2_control
     name="odrive_ros2_control"
-    enable_joint0="$(arg enable_joint0)"
-    enable_joint1="$(arg enable_joint1)" />
+    enable_front_left="$(arg enable_front_left)"
+    enable_front_right="$(arg enable_front_right)"
+    enable_back_right="$(arg enable_back_right)"
+    enable_back_left="$(arg enable_back_left)" />
 
 </robot>
